@@ -2,13 +2,12 @@ package main
 
 import (
 	"aoc-2024/utils"
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
 )
 
-func isReportSafe(line string) bool {
+func partOne(line string) bool {
 	chars := strings.Split(line, " ")
 
 	var levels []int
@@ -19,29 +18,21 @@ func isReportSafe(line string) bool {
 
 	allIncreasing := true
 	allDecreasing := true
-	differenceGreaterThanThree := true
+	var maxDiff float64
 
 	for i := 0; i < len(levels)-1; i++ {
-		if levels[i] > levels[i+1] {
+		var diff float64
+		if levels[i] >= levels[i+1] {
 			allIncreasing = false
 		}
-
-		if levels[i] < levels[i+1] {
+		if levels[i] <= levels[i+1] {
 			allDecreasing = false
 		}
-
-		diff := math.Abs(float64(levels[i] - levels[i+1]))
-
-		// diff is at least 1 but at most 3
-		if diff > 3 && diff < 1 {
-			differenceGreaterThanThree = false
-		}
+		diff = math.Abs(float64(levels[i] - levels[i+1]))
+		maxDiff = max(diff, maxDiff)
 	}
-
-	isSafe := allIncreasing || allDecreasing && !differenceGreaterThanThree
-
-	fmt.Printf("line: %v isSafe: %b\n", line, isSafe)
-
+	differenceIsAtleastOneAndAtMostThree := maxDiff >= 1 && maxDiff <= 3
+	isSafe := allIncreasing != allDecreasing && differenceIsAtleastOneAndAtMostThree
 	return isSafe
 }
 
@@ -53,7 +44,7 @@ func main() {
 
 	countSafe := 0
 	for _, line := range lines {
-		if isReportSafe(line) {
+		if partOne(line) {
 			countSafe++
 		}
 	}
